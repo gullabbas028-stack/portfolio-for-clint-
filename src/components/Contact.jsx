@@ -29,10 +29,15 @@ export default function Contact() {
       emailjsConfig.publicKey !== "YOUR_PUBLIC_KEY";
 
     if (!isConfigured) {
-      setStatus("error");
-      setErrorMsg(
-        "Contact form isn't connected yet — add your EmailJS IDs in src/data.js (see README)."
+      const subject = encodeURIComponent(`Portfolio message from ${form.name.trim()}`);
+      const body = encodeURIComponent(
+        `Name: ${form.name.trim()}\nEmail: ${form.email.trim()}\n\n${form.message.trim()}`
       );
+
+      window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
+      setStatus("sent");
+      setErrorMsg("");
+      setForm(initialForm);
       return;
     }
 
@@ -51,7 +56,7 @@ export default function Contact() {
       );
       setStatus("sent");
       setForm(initialForm);
-    } catch (err) {
+    } catch {
       setStatus("error");
       setErrorMsg("Message failed to send. Please try again or email directly.");
     }
@@ -149,7 +154,9 @@ export default function Contact() {
           </button>
 
           {status === "sent" && (
-            <p className="font-mono text-sm text-cyan">✓ Message sent — thank you, I'll reply soon.</p>
+            <p className="font-mono text-sm text-cyan">
+              ✓ Your email app has been opened — thank you, I'll reply soon.
+            </p>
           )}
           {status === "error" && <p className="font-mono text-sm text-danger">✕ {errorMsg}</p>}
         </motion.form>
